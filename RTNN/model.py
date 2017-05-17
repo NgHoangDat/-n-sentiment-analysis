@@ -71,21 +71,50 @@ class Model:
 
     # region activate function
     def activate_node(self, node, left, right):
+        """
+        
+        :param node: 
+        :param left: 
+        :param right: 
+        :return: 
+        """
         node.actf = Model.activate_function(self.V, self.W, self.b, left, right)
         node.prob = Model.softmax(self.Ws, self.bs, node.actf)
 
     @staticmethod
     def activate_function(tensor, weight, bias, left, right):
+        """
+        
+        :param tensor: 
+        :param weight: 
+        :param bias: 
+        :param left: 
+        :param right: 
+        :return: 
+        """
         lr = np.concatenate((left, right))
         return np.tanh(Model.tensordot(lr, tensor) + np.dot(weight, lr) + bias)
 
     @staticmethod
     def tensordot(a, b):
+        """
+        
+        :param a: 
+        :param b: 
+        :return: 
+        """
         left = np.asarray([np.dot(a.T, r).tolist() for r in b])
         return np.asarray([np.dot(r, a).tolist() for r in left])
 
     @staticmethod
     def softmax(weight, bias, x):
+        """
+        
+        :param weight: 
+        :param bias: 
+        :param x: 
+        :return: 
+        """
         r = np.dot(weight, x) + bias
         return np.exp(r) / np.sum(np.exp(r), axis=0)
 
@@ -94,6 +123,13 @@ class Model:
     # region preproccess
 
     def preproccess(self, trainf, savef, word_limits):
+        """
+        
+        :param trainf: 
+        :param savef: 
+        :param word_limits: 
+        :return: 
+        """
         start = time()
         trees = TreeNet.load_trees(trainf)
         dictionary = set()
@@ -122,12 +158,23 @@ class Model:
         print('Finish proccess data in {t} seconds.'.format(t=time() - start))
 
     def process_node(self, node):
+        """
+        
+        :param node: 
+        :return: 
+        """
         if node.isLeaf:
             node.word = self.word_map.get(node.word, 0)
         node.label = int(node.label)
 
     @staticmethod
     def compute_IG(word_count, cc):
+        """
+        
+        :param word_count: 
+        :param cc: 
+        :return: 
+        """
         word_IG = dict()
         dim = len(cc)
         esp = 1e-4
@@ -146,6 +193,12 @@ class Model:
 
     @staticmethod
     def extract_dict(word_IG, limit):
+        """
+        
+        :param word_IG: 
+        :param limit: 
+        :return: 
+        """
         sorted_words = sorted(word_IG.items(), key=operator.itemgetter(1))
         sorted_words.reverse()
         return sorted([word for word, _ in sorted_words[0:limit]])
@@ -154,6 +207,18 @@ class Model:
 
     # region train
     def train(self, trainf, rpf, savef, save_fre, epoch, batch_size, step_size=0.01, fudge_factor=1e-8):
+        """
+        
+        :param trainf: 
+        :param rpf: 
+        :param savef: 
+        :param save_fre: 
+        :param epoch: 
+        :param batch_size: 
+        :param step_size: 
+        :param fudge_factor: 
+        :return: 
+        """
         with open(rpf, 'w') as report:
             trp = [time()]
             for i in range(epoch):
@@ -189,7 +254,13 @@ class Model:
                     self.save(savef)
 
     def train_batch(self, batch, step_size, fudge_factor):
-
+        """
+        
+        :param batch: 
+        :param step_size: 
+        :param fudge_factor: 
+        :return: 
+        """
         res_batch = np.zeros((3,))
         correct_tree = 0
         self.dL, self.dV, self.dW, self.db, self.dWs, self.dbs = self.default_grad()
@@ -222,6 +293,11 @@ class Model:
         return np.hstack((res_batch, correct_tree))
 
     def forward_prob(self, node: Node):
+        """
+        
+        :param node: 
+        :return: 
+        """
         err = np.zeros((3,))
         if node.isLeaf:
             node.actf = self.L[node.word]
@@ -234,6 +310,12 @@ class Model:
             + np.asarray([-math.log(node.prob[node.label]), np.argmax(node.prob) == node.label, 1])
 
     def backward_prob(self, node: Node, err=None):
+        """
+        
+        :param node: 
+        :param err: 
+        :return: 
+        """
         delta = node.prob
         delta[node.label] -= 1.0
 
@@ -270,6 +352,12 @@ class Model:
         self.backward_prob(node.right, down_err[self.dim:])
 
     def update(self, step_size, fudge_factor):
+        """
+        
+        :param step_size: 
+        :param fudge_factor: 
+        :return: 
+        """
         for key, val in self.dL.items():
             if key in self.sumdL2.keys():
                 self.sumdL2[key] += val ** 2
@@ -293,6 +381,11 @@ class Model:
         self.bs -= step_size / (fudge_factor + np.sqrt(self.sumdbs2)) * self.dbs
 
     def validate(self, devf):
+        """
+        
+        :param devf: 
+        :return: 
+        """
         confusion_matrix = np.zeros((self.dim, self.dim))
         while True:
             with open(devf, 'rb') as f:
@@ -306,6 +399,12 @@ class Model:
 
     # region test
     def test(self, testf, rpf):
+        """
+        
+        :param testf: 
+        :param rpf: 
+        :return: 
+        """
         with open(rpf, 'w') as report:
             with open(testf, 'r') as f:
                 result = np.zeros((4,))
@@ -321,6 +420,11 @@ class Model:
                 return result
 
     def estimate_sentis(self, tree):
+        """
+        
+        :param tree: 
+        :return: 
+        """
         def traverse(node: Node):
             node.label = int(node.label)
             res = np.zeros((2,))
