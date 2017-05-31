@@ -2,14 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4f30b6c-b545-478d-aeaf-0e571b9ec13a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/report/report.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/report/test_report.txt" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/jungle/dev.p" afterPath="$PROJECT_DIR$/data/jungle/dev.p" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/jungle/train.p" afterPath="$PROJECT_DIR$/data/jungle/train.p" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/models/model-1.p" afterPath="$PROJECT_DIR$/data/models/model-1.p" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/report/report-1.xlsx" afterPath="$PROJECT_DIR$/report/report-1.xlsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RTNN/model.py" afterPath="$PROJECT_DIR$/RTNN/model.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RTNN/train.py" afterPath="$PROJECT_DIR$/RTNN/train.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/RTNN/tree.py" afterPath="$PROJECT_DIR$/RTNN/tree.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/constant.py" afterPath="$PROJECT_DIR$/constant.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/report/report.txt" afterPath="$PROJECT_DIR$/report/report.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,11 +32,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="train.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/RTNN/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="46" lean-forward="false" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="46" />
+            <state relative-caret-position="187">
+              <caret line="11" column="66" lean-forward="true" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
               <folding>
                 <element signature="e#9#19#0" expanded="true" />
               </folding>
@@ -53,11 +54,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/RTNN/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="377" column="64" lean-forward="false" selection-start-line="377" selection-start-column="64" selection-end-line="377" selection-end-column="64" />
+            <state relative-caret-position="354">
+              <caret line="469" column="46" lean-forward="false" selection-start-line="469" selection-start-column="46" selection-end-line="469" selection-end-column="46" />
               <folding>
                 <element signature="e#9#20#0" expanded="true" />
                 <element signature="e#244#269#0" expanded="false" />
@@ -67,15 +68,35 @@
                 <element signature="e#1748#1774#0" expanded="false" />
                 <element signature="e#1831#2084#0" expanded="false" />
                 <element signature="e#2174#2454#0" expanded="false" />
-                <element signature="e#3082#4189#0" expanded="false" />
                 <element signature="e#4250#4695#0" expanded="false" />
                 <element signature="e#4755#5870#0" expanded="false" />
                 <element signature="e#5914#6095#0" expanded="false" />
                 <element signature="e#6166#6800#0" expanded="false" />
                 <element signature="e#6866#7129#0" expanded="false" />
-                <element signature="e#10379#10987#0" expanded="false" />
-                <element signature="e#16942#18091#0" expanded="false" />
+                <element signature="e#7192#9122#0" expanded="false" />
+                <element signature="e#9957#10565#0" expanded="false" />
+                <element signature="e#16953#18102#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="train.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/jungle/train.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-144949">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tree.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RTNN/tree.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="935">
+              <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -89,9 +110,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/RTNN/tree.py" />
-        <option value="$PROJECT_DIR$/RTNN/train.py" />
         <option value="$PROJECT_DIR$/constant.py" />
         <option value="$PROJECT_DIR$/RTNN/model.py" />
+        <option value="$PROJECT_DIR$/RTNN/train.py" />
       </list>
     </option>
   </component>
@@ -342,7 +363,7 @@
     <frame x="-8" y="-8" width="1320" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27857143" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27857143" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32872504" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -411,14 +432,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -468,14 +489,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -535,14 +556,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -612,14 +633,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -671,14 +692,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -720,14 +741,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -789,14 +810,14 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -824,29 +845,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RTNN/tree.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/RTNN/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RTNN/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="46" lean-forward="false" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="46" />
-          <folding>
-            <element signature="e#9#19#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -858,10 +861,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/RTNN/tree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="935">
+          <caret line="55" column="0" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/jungle/dev.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-18418">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/jungle/train.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-144949">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/RTNN/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="377" column="64" lean-forward="false" selection-start-line="377" selection-start-column="64" selection-end-line="377" selection-end-column="64" />
+        <state relative-caret-position="354">
+          <caret line="469" column="46" lean-forward="false" selection-start-line="469" selection-start-column="46" selection-end-line="469" selection-end-column="46" />
           <folding>
             <element signature="e#9#20#0" expanded="true" />
             <element signature="e#244#269#0" expanded="false" />
@@ -871,14 +898,24 @@
             <element signature="e#1748#1774#0" expanded="false" />
             <element signature="e#1831#2084#0" expanded="false" />
             <element signature="e#2174#2454#0" expanded="false" />
-            <element signature="e#3082#4189#0" expanded="false" />
             <element signature="e#4250#4695#0" expanded="false" />
             <element signature="e#4755#5870#0" expanded="false" />
             <element signature="e#5914#6095#0" expanded="false" />
             <element signature="e#6166#6800#0" expanded="false" />
             <element signature="e#6866#7129#0" expanded="false" />
-            <element signature="e#10379#10987#0" expanded="false" />
-            <element signature="e#16942#18091#0" expanded="false" />
+            <element signature="e#7192#9122#0" expanded="false" />
+            <element signature="e#9957#10565#0" expanded="false" />
+            <element signature="e#16953#18102#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RTNN/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="66" lean-forward="true" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
+          <folding>
+            <element signature="e#9#19#0" expanded="true" />
           </folding>
         </state>
       </provider>

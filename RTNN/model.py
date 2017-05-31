@@ -262,12 +262,12 @@ class Model:
         ws.merge_cells("B1:F1")
         ws["B1"] = "Train"
         ws["B2"], ws["C2"], ws["D2"], ws["E2"], ws["F2"] = 0, 1, 2, 3, 4
-        max_ngram_train = self.inspect_dataset(trainf + ".p", 3, 2)
+        self.inspect_dataset(trainf + ".p", 3, 2)
 
         ws.merge_cells("G1:K1")
         ws["G1"] = "Dev"
         ws["G2"], ws["H2"], ws["I2"], ws["J2"], ws["K2"] = 0, 1, 2, 3, 4
-        max_ngram_dev = self.inspect_dataset(devf + ".p", 3, 7)
+        self.inspect_dataset(devf + ".p", 3, 7)
 
         # ==============================================================================================================
         self.wb.create_sheet("dictionary")
@@ -276,28 +276,24 @@ class Model:
             ws.cell(row=1+int(index), column=2).value = word
 
         # ==============================================================================================================
-        self.wb.create_sheet("accuracy all on train set")
-        ws = self.wb["accuracy all on train set"]
-        ws['A1'], ws['B1'], ws['C1'], ws['D1'] = 'epoch', 'error', 'all', 'root'
-
-        # ==============================================================================================================
-        self.wb.create_sheet("accuracy all on dev set")
-        ws = self.wb["accuracy all on dev set"]
-        ws['A1'], ws['B1'], ws['C1'], ws['D1'] = 'epoch', 'error', 'all', 'root'
+        self.wb.create_sheet("accuracy all")
+        ws = self.wb["accuracy all"]
+        ws["A2"] = "epoch"
+        ws.merge_cells("B1:D1")
+        ws["B1"] = "train"
+        ws.merge_cells("E1:G1")
+        ws["E1"] = "dev"
+        ws['B2'], ws['C2'], ws['D2'] = ws['E2'], ws['F2'], ws['G2'] = 'error', 'all', 'root'
 
         # ==============================================================================================================
         self.wb.create_sheet("accuracy n-gram on train set")
         ws = self.wb["accuracy n-gram on train set"]
         ws['A1'] = 'n-gram'
-        for i in range(max_ngram_train):
-            ws.cell(row=2+i, column=1).value = i + 1
 
         # ==============================================================================================================
         self.wb.create_sheet("accuracy n-gram on dev set")
         ws = self.wb["accuracy n-gram on dev set"]
         ws['A1'] = 'n-gram'
-        for i in range(max_ngram_dev):
-            ws.cell(row=2 + i, column=1).value = i + 1
 
         self.wb.save(filename)
 
@@ -307,8 +303,8 @@ class Model:
             while True:
                 try:
                     tree = cPickle.load(file)
-                    numWord = int(tree.root.numWord)
-                    max_ngram = numWord if numWord > max_ngram else max_ngram
+                    num_word = int(tree.root.numWord)
+                    max_ngram = num_word if num_word > max_ngram else max_ngram
                     ws = self.wb["data decription"]
                     if ws.cell(row=3, column=j+int(tree.root.label)).value is not None:
                         ws.cell(row=3, column=j+int(tree.root.label)).value += 1
@@ -317,7 +313,6 @@ class Model:
                     self.inspect_node(tree.root, i, j)
                 except EOFError:
                     break
-        return max_ngram
 
     def inspect_node(self, node, i, j):
         ws = self.wb["data decription"]
@@ -353,11 +348,16 @@ class Model:
         """
         self.preproccess(trainf, devf, word_limit)
         self.create_rpfile(rpf, trainf, devf)
-        trp = [time()]
+        start = time()
         for i in range(epoch):
-            print("Starting epoch {n}...".format(n=i + 1), end='')
+            self.wb["accuracy all"].cell(row=3 + i, column=1).value = i + 1
+            self.wb["accuracy n-gram on train set"].cell(row=1, column=2 + i).value = i + 1
+            self.wb["accuracy n-gram on dev set"].cell(row=1, column=2 + i).value = i + 1
+            if not i + 1 % save_fre:
+                print("Starting epoch {n}...".format(n=i + 1), end='')
             self.sumdL2, self.sumdV2, self.sumdW2, self.sumdb2, self.sumdWs2, self.sumdbs2 = self.default_grad()
-            with open(trainf, 'rb') as f:
+            total_tree = 0
+            with open(trainf + '.p', 'rb') as f:
                 res = np.zeros((4,))
                 data = list()
                 for j in range(2 * batch_size):
@@ -375,64 +375,49 @@ class Model:
                         random.shuffle(data)
                         for k in range(min(batch_size, len(data))):
                             batch.append(data.pop(0))
-                        res += self.train_batch(batch, step_size)
+                        res += self.train_batch(i, batch, step_size, fudge)
+                        total_tree += len(batch)
                         batch.clear()
-            print("Cost: {c}. Correct node: {cor}. Total node: {t}. Correct tree {ct}. "
-                  .format(c=res[0], cor=res[1], t=res[2], ct=res[3]))
-            trp.append(time())
-            if not i % save_fre:
+            self.wb["accuracy all"].cell(row=3 + i, column=2).value = res[0]
+            self.wb["accuracy all"].cell(row=3 + i, column=3).value = res[1] * 100 / res[2]
+            self.wb["accuracy all"].cell(row=3 + i, column=4).value = res[3] * 100 / total_tree
+            if not i + 1 % save_fre:
                 self.save(savef)
 
-    def train_s(self, trainf, rpf, savef, save_fre, epoch, batch_size, step_size=0.01, fudge_factor=1e-8):
-        """
-        
-        :param trainf: 
-        :param rpf: 
-        :param savef: 
-        :param save_fre: 
-        :param epoch: 
-        :param batch_size: 
-        :param step_size: 
-        :param fudge_factor: 
-        :return: 
-        """
-        with open(rpf, 'w') as report:
-            trp = [time()]
-            for i in range(epoch):
-                report.write("=" * 80 + "\n")
-                report.write("Starting epoch {n}...".format(n=i + 1))
-                print("Starting epoch {n}...".format(n=i + 1), end='')
-                self.sumdL2, self.sumdV2, self.sumdW2, self.sumdb2, self.sumdWs2, self.sumdbs2 = self.default_grad()
-                with open(trainf, 'rb') as f:
-                    res = np.zeros((4,))
-                    data = list()
-                    for j in range(2 * batch_size):
-                        data.append(cPickle.load(f))
-                    batch = list()
-                    while True:
-                        for j in range(batch_size):
-                            try:
-                                data.append(cPickle.load(f))
-                            except EOFError:
-                                break
-                        if not len(data):
-                            break
-                        else:
-                            random.shuffle(data)
-                            for k in range(min(batch_size, len(data))):
-                                batch.append(data.pop(0))
-                            res += self.train_batch(batch, step_size, fudge_factor)
-                            batch.clear()
-                print("Cost: {c}. Correct node: {cor}. Total node: {t}. Correct tree {ct}. "
-                      .format(c=res[0], cor=res[1], t=res[2], ct=res[3]))
-                trp.append(time())
-                report.write("Finish epoch {n} in {t}.\n".format(n=i+1, t=trp[-1]-trp[-2]))
-                if not i % save_fre:
-                    self.save(savef)
+            res = self.test_dev(devf, i)
+            self.wb["accuracy all"].cell(row=3 + i, column=5).value = res[0]
+            self.wb["accuracy all"].cell(row=3 + i, column=6).value = res[1] * 100 / res[2]
+            self.wb["accuracy all"].cell(row=3 + i, column=7).value = res[3] * 100 / res[4]
 
-    def train_batch(self, batch, step_size, fudge_factor):
+        t = time() - start
+        print("Finish training in {t}.".format(t=t))
+        self.wb.save(rpf)
+
+    def test_dev(self, devf, epoch):
+        with open(devf + '.p', 'rb') as file:
+            res = np.zeros((3,))
+            correct_tree = 0
+            total_tree = 0
+            while True:
+                try:
+                    tree = cPickle.load(file)
+                    total_tree += 1
+                    res += self.forward_prob(tree.root, epoch, mode="dev")
+                    if np.argmax(tree.root.prob) == tree.root.label:
+                        correct_tree += 1
+                except EOFError:
+                    break
+            res[0] += self.alpha / 2 * (np.sum(self.V ** 2)
+                                        + np.sum(self.W ** 2)
+                                        + np.sum(self.Ws ** 2)
+                                        + np.sum(self.b ** 2)
+                                        + np.sum(self.bs ** 2))
+            return np.hstack((res, correct_tree, total_tree))
+
+    def train_batch(self, epoch, batch, step_size, fudge_factor):
         """
-        
+
+        :param epoch
         :param batch: 
         :param step_size: 
         :param fudge_factor: 
@@ -443,7 +428,7 @@ class Model:
         self.dL, self.dV, self.dW, self.db, self.dWs, self.dbs = self.default_grad()
 
         for tree in batch:
-            res_batch += self.forward_prob(tree.root)
+            res_batch += self.forward_prob(tree.root, epoch)
             if np.argmax(tree.root.prob) == tree.root.label:
                 correct_tree += 1
         res_batch[0] += self.alpha / 2 * (np.sum(self.V ** 2)
@@ -469,10 +454,12 @@ class Model:
         self.update(step_size, fudge_factor)
         return np.hstack((res_batch, correct_tree))
 
-    def forward_prob(self, node: Node):
+    def forward_prob(self, node: Node, epoch, mode="train"):
         """
         
-        :param node: 
+        :param node:
+        :param epoch
+        :param mode:
         :return: 
         """
         err = np.zeros((3,))
@@ -480,9 +467,20 @@ class Model:
             node.actf = self.L[node.word]
             node.prob = Model.softmax(self.Ws, self.bs, node.actf)
         else:
-            err += self.forward_prob(node.left)
-            err += self.forward_prob(node.right)
+            err += self.forward_prob(node.left, epoch, mode)
+            err += self.forward_prob(node.right, epoch, mode)
             self.activate_node(node, node.left.actf, node.right.actf)
+
+        if mode == "train":
+            ws = self.wb["accuracy n-gram on train set"]
+        else:
+            ws = self.wb["accuracy n-gram on dev set"]
+        if ws.cell(row=1 + int(node.numWord), column=1).value is None:
+            ws.cell(row=1 + int(node.numWord), column=1).value = int(node.numWord)
+        if ws.cell(row=1 + int(node.numWord), column=2 + epoch).value is None:
+            ws.cell(row=1 + int(node.numWord), column=2 + epoch).value = 0
+        if np.argmax(node.prob) == node.label:
+            ws.cell(row=1 + int(node.numWord), column=2 + epoch).value += 1
         return err \
             + np.asarray([-math.log(node.prob[node.label]), np.argmax(node.prob) == node.label, 1])
 
