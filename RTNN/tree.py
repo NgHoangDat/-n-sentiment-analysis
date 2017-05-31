@@ -13,6 +13,7 @@ class Node:
         self.isLeaf = False
         self.prob = None
         self.actf = None
+        self.numWord = 0
 
     def __str__(self):
         if self.isLeaf:
@@ -56,6 +57,7 @@ class TreeNet:
         if tree_str.find(self.open) == -1:
             node.word = tree_str.lower()
             node.isLeaf = True
+            node.numWord = 1
             return node
         else:
             c_open, c_close, split = (1, 0, 1)
@@ -69,6 +71,7 @@ class TreeNet:
 
             node.left = self.parse(tree_str[0:split].strip())
             node.right = self.parse(tree_str[split:].strip())
+            node.numWord = node.left.numWord + node.right.numWord
             return node
 
     @staticmethod

@@ -5,6 +5,7 @@ import math
 import operator
 import random
 from time import time
+from openpyxl import Workbook
 
 from nltk.corpus import stopwords
 import numpy as np
@@ -18,10 +19,14 @@ class Model:
     # region init, save, load
     def __init__(self, dim, alpha):
         """
-        
+
+        :param trainf
+        :param devf
         :param dim: 
         :param alpha: 
         """
+        self.wb = None
+
         self.dim = dim
         self.alpha = alpha
 
@@ -122,40 +127,81 @@ class Model:
 
     # region preproccess
 
-    def preproccess(self, trainf, savef, word_limits):
+    def preproccess(self, trainf, devf, word_limits):
         """
         
         :param trainf: 
-        :param savef: 
+        :param devf: 
         :param word_limits: 
         :return: 
         """
         start = time()
-        trees = TreeNet.load_trees(trainf)
-        dictionary = set()
-        count = [0] * 5
-        words_count = dict()
-        for tree in trees:
-            label = int(tree.root.label)
-            words = TreeNet.DFS_traverse(tree.root, (lambda node, l, r: l | r), (lambda node: {node.word}))
-            dictionary |= {word for word in words if word not in stopwords.words("english")}
-            count[label] += 1
-            for word in words:
-                try:
-                    words_count[word][label] += 1
-                except KeyError:
-                    words_count[word] = [0] * 5
-                    words_count[word][label] += 1
-        word_IG = Model.compute_IG(words_count, count)
-        dictionary = Model.extract_dict(word_IG, word_limits)
+
+        train_trees = TreeNet.load_trees(trainf + ".txt")
+        dictionary, count, words_count = Model.get_word_by_tree(train_trees)
+        word_ig = Model.compute_info_gain(words_count, count)
+        dictionary = Model.extract_dict(word_ig, word_limits)
         self.word_map.update({dictionary[i]: i for i in range(len(dictionary))})
         for i in range(len(self.word_map)):
             self.L = np.vstack((self.L, 0.01 * np.random.randn(self.dim, )))
-        with open(savef, 'wb') as f:
-            for tree in trees:
+        with open(trainf + ".p", 'wb') as f:
+            for tree in train_trees:
                 TreeNet.BFS_traverse(tree.root, self.process_node)
                 cPickle.dump(tree, f)
+
+        dev_trees = TreeNet.load_trees(devf + ".txt")
+        with open(devf + ".p", 'wb') as f:
+            for tree in dev_trees:
+                TreeNet.BFS_traverse(tree.root, self.process_node)
+                cPickle.dump(tree, f)
+
         print('Finish proccess data in {t} seconds.'.format(t=time() - start))
+
+    @staticmethod
+    def get_word_by_tree(trees):
+        dictionary = set()
+        count = np.zeros(5,)
+        words_count = dict()
+        for tree in trees:
+            d, c, wc = Model.get_word_by_node(tree.root)
+            dictionary |= d
+            count += c
+            for word in wc.keys():
+                try:
+                    words_count[word] += wc[word]
+                except KeyError:
+                    words_count[word] = wc[word]
+        return dictionary, count, words_count
+
+    @staticmethod
+    def get_word_by_node(node):
+        label = int(node.label)
+        if node.isLeaf:
+            if node.word in stopwords.words("english"):
+                return set(), np.zeros(5,), dict()
+            dictionary = {node.word}
+            count = np.zeros(5,)
+            count[label] += 1
+            words_count = {node.word: count}
+        else:
+            left = Model.get_word_by_node(node.left)
+            right = Model.get_word_by_node(node.right)
+            dictionary = left[0] | right[0]
+
+            count = left[1] + right[1]
+            count[label] += 1
+
+            words_count = dict()
+            for word in set(left[2]).intersection(set(right[2])):
+                words_count[word] = left[2][word] + right[2][word]
+                words_count[word][label] += 1
+            for word in set(left[2]).difference(set(right[2])):
+                words_count[word] = left[2][word]
+                words_count[word][label] += 1
+            for word in set(right[2]).difference(set(left[2])):
+                words_count[word] = right[2][word]
+                words_count[word][label] += 1
+        return dictionary, count, words_count
 
     def process_node(self, node):
         """
@@ -168,7 +214,7 @@ class Model:
         node.label = int(node.label)
 
     @staticmethod
-    def compute_IG(word_count, cc):
+    def compute_info_gain(word_count, cc):
         """
         
         :param word_count: 
@@ -192,21 +238,152 @@ class Model:
         return word_IG
 
     @staticmethod
-    def extract_dict(word_IG, limit):
+    def extract_dict(word_ig, limit):
         """
         
-        :param word_IG: 
+        :param word_ig: 
         :param limit: 
         :return: 
         """
-        sorted_words = sorted(word_IG.items(), key=operator.itemgetter(1))
+        sorted_words = sorted(word_ig.items(), key=operator.itemgetter(1))
         sorted_words.reverse()
         return sorted([word for word, _ in sorted_words[0:limit]])
 
+    def create_rpfile(self, filename, trainf, devf):
+        self.wb = Workbook()
+
+        # ==============================================================================================================
+        ws = self.wb.active
+        ws.title = "data decription"
+
+        ws["A3"] = "Root"
+        ws["A2"] = "label"
+
+        ws.merge_cells("B1:F1")
+        ws["B1"] = "Train"
+        ws["B2"], ws["C2"], ws["D2"], ws["E2"], ws["F2"] = 0, 1, 2, 3, 4
+        max_ngram_train = self.inspect_dataset(trainf + ".p", 3, 2)
+
+        ws.merge_cells("G1:K1")
+        ws["G1"] = "Dev"
+        ws["G2"], ws["H2"], ws["I2"], ws["J2"], ws["K2"] = 0, 1, 2, 3, 4
+        max_ngram_dev = self.inspect_dataset(devf + ".p", 3, 7)
+
+        # ==============================================================================================================
+        self.wb.create_sheet("dictionary")
+        ws = self.wb["dictionary"]
+        for word, index in self.word_map.items():
+            ws.cell(row=1+int(index), column=2).value = word
+
+        # ==============================================================================================================
+        self.wb.create_sheet("accuracy all on train set")
+        ws = self.wb["accuracy all on train set"]
+        ws['A1'], ws['B1'], ws['C1'], ws['D1'] = 'epoch', 'error', 'all', 'root'
+
+        # ==============================================================================================================
+        self.wb.create_sheet("accuracy all on dev set")
+        ws = self.wb["accuracy all on dev set"]
+        ws['A1'], ws['B1'], ws['C1'], ws['D1'] = 'epoch', 'error', 'all', 'root'
+
+        # ==============================================================================================================
+        self.wb.create_sheet("accuracy n-gram on train set")
+        ws = self.wb["accuracy n-gram on train set"]
+        ws['A1'] = 'n-gram'
+        for i in range(max_ngram_train):
+            ws.cell(row=2+i, column=1).value = i + 1
+
+        # ==============================================================================================================
+        self.wb.create_sheet("accuracy n-gram on dev set")
+        ws = self.wb["accuracy n-gram on dev set"]
+        ws['A1'] = 'n-gram'
+        for i in range(max_ngram_dev):
+            ws.cell(row=2 + i, column=1).value = i + 1
+
+        self.wb.save(filename)
+
+    def inspect_dataset(self, filename, i, j):
+        with open(filename, 'rb') as file:
+            max_ngram = 0
+            while True:
+                try:
+                    tree = cPickle.load(file)
+                    numWord = int(tree.root.numWord)
+                    max_ngram = numWord if numWord > max_ngram else max_ngram
+                    ws = self.wb["data decription"]
+                    if ws.cell(row=3, column=j+int(tree.root.label)).value is not None:
+                        ws.cell(row=3, column=j+int(tree.root.label)).value += 1
+                    else:
+                        ws.cell(row=3, column=j + int(tree.root.label)).value = 1
+                    self.inspect_node(tree.root, i, j)
+                except EOFError:
+                    break
+        return max_ngram
+
+    def inspect_node(self, node, i, j):
+        ws = self.wb["data decription"]
+        if ws.cell(row=i+int(node.numWord), column=1).value is None:
+            ws.cell(row=i+int(node.numWord), column=1).value = int(node.numWord)
+        if ws.cell(row=i+int(node.numWord), column=j+int(node.label)).value is not None:
+            ws.cell(row=i+int(node.numWord), column=j+int(node.label)).value += 1
+        else:
+            ws.cell(row=i + int(node.numWord), column=j + int(node.label)).value = 1
+        if node.isLeaf:
+            return
+        else:
+            self.inspect_node(node.left, i, j)
+            self.inspect_node(node.right, i, j)
     # endregion
 
-    # region train
-    def train(self, trainf, rpf, savef, save_fre, epoch, batch_size, step_size=0.01, fudge_factor=1e-8):
+    # region train_s
+
+    def train(self, trainf, devf, rpf, savef, save_fre, word_limit, epoch, batch_size, step_size=0.01, fudge=1e-8):
+        """
+
+        :param trainf:
+        :param devf:
+        :param rpf:
+        :param savef:
+        :param save_fre:
+        :param word_limit:
+        :param epoch:
+        :param batch_size:
+        :param step_size:
+        :param fudge:
+        :return:
+        """
+        self.preproccess(trainf, devf, word_limit)
+        self.create_rpfile(rpf, trainf, devf)
+        trp = [time()]
+        for i in range(epoch):
+            print("Starting epoch {n}...".format(n=i + 1), end='')
+            self.sumdL2, self.sumdV2, self.sumdW2, self.sumdb2, self.sumdWs2, self.sumdbs2 = self.default_grad()
+            with open(trainf, 'rb') as f:
+                res = np.zeros((4,))
+                data = list()
+                for j in range(2 * batch_size):
+                    data.append(cPickle.load(f))
+                batch = list()
+                while True:
+                    for j in range(batch_size):
+                        try:
+                            data.append(cPickle.load(f))
+                        except EOFError:
+                            break
+                    if not len(data):
+                        break
+                    else:
+                        random.shuffle(data)
+                        for k in range(min(batch_size, len(data))):
+                            batch.append(data.pop(0))
+                        res += self.train_batch(batch, step_size)
+                        batch.clear()
+            print("Cost: {c}. Correct node: {cor}. Total node: {t}. Correct tree {ct}. "
+                  .format(c=res[0], cor=res[1], t=res[2], ct=res[3]))
+            trp.append(time())
+            if not i % save_fre:
+                self.save(savef)
+
+    def train_s(self, trainf, rpf, savef, save_fre, epoch, batch_size, step_size=0.01, fudge_factor=1e-8):
         """
         
         :param trainf: 
