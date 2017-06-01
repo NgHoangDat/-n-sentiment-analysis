@@ -247,7 +247,7 @@ class Model:
         """
         sorted_words = sorted(word_ig.items(), key=operator.itemgetter(1))
         sorted_words.reverse()
-        return sorted([word for word, _ in sorted_words[0:limit]])
+        return [word for word, _ in sorted_words[0:limit]]
 
     def create_rpfile(self, filename, trainf, devf):
         self.wb = Workbook()
@@ -554,21 +554,6 @@ class Model:
 
         self.sumdbs2 += self.dbs ** 2
         self.bs -= step_size / (fudge_factor + np.sqrt(self.sumdbs2)) * self.dbs
-
-    def validate(self, devf):
-        """
-        
-        :param devf: 
-        :return: 
-        """
-        confusion_matrix = np.zeros((self.dim, self.dim))
-        while True:
-            with open(devf, 'rb') as f:
-                try:
-                    tree = cPickle.load(f)
-                    self.forward_prob(tree.root)
-                except EOFError:
-                    break
 
     # endregion
 
